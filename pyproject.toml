@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "rust-py"
+version = "0.1.0"
+description = ""
+authors = ["umatbro <umatbroo@gmail.com>"]
+readme = "README.md"
+packages = [{include = "rust_py"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

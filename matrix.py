@@ -2,14 +2,14 @@ from __future__ import annotations
 
 
 class PyMatrix:
-    def __init__(self, data: list[list[int]]):
+    def __init__(self, data: list[list[float]]):
         if not all(len(row) == len(data[0]) for row in data):
             raise ValueError("Invalid matrix dimensions. All rows must have the same length.")
         self.rows = len(data)
         self.cols = len(data[0])
         self.data = data
 
-    def dot(self, other: PyMatrix):
+    def mul(self, other: PyMatrix):
         if self.cols != other.rows:
             raise ValueError(
                 "Invalid matrix dimensions. "

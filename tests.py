@@ -38,5 +38,5 @@ from matrix import PyMatrix
     ]
 )
 def test_python_matrix_mul(a, b, expected):
-    result = a.dot(b)
+    result = a.mul(b)
     assert result.data == expected.data
