@@ -1,3 +1,12 @@
+[project]
+name = "mtrx-rs"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+
 [tool.poetry]
 name = "rust-py"
 version = "0.1.0"
@@ -8,10 +17,18 @@ packages = [{include = "rust_py"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+maturin = "^1.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.2"
 
+#[build-system]
+#requires = ["poetry-core"]
+#build-backend = "poetry.core.masonry.api"
+
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["maturin>=1.1,<2.0"]
+build-backend = "maturin"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]

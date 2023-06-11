@@ -2,6 +2,7 @@ import random
 import time
 
 from matrix import PyMatrix
+from mtrx_rs import RsMatrix
 
 ROW_COUNT_A = 100
 COL_COUNT_A = 100
@@ -36,6 +37,11 @@ def benchmark_python(test_data: list[tuple[list[list[float]], list[list[float]]]
         PyMatrix(a).mul(PyMatrix(b))
 
 
+def benchmark_rs(test_data: list[tuple[list[list[float]], list[list[float]]]]):
+    for a, b in test_data:
+        RsMatrix(a).mul(RsMatrix(b))
+
+
 def time_execution(func, *args, **kwargs) -> float:
     start = time.time()
     func(*args, **kwargs)
@@ -50,3 +56,6 @@ if __name__ == "__main__":
     python_time = time_execution(benchmark_python, setup)
     print(f"Python implementation total: {python_time}")
     print(f"Python implementation per iteration: {python_time / NUM_TESTS}")
+    rs_time = time_execution(benchmark_rs, setup)
+    print(f"Rust implementation total: {rs_time}")
+    print(f"Rust implementation per iteration: {rs_time / NUM_TESTS}")
