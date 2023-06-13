@@ -1,5 +1,24 @@
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
+use rayon::prelude::*;
+
+
+
+fn multiply_matrices(matrix1: &[Vec<f64>], matrix2: &[Vec<f64>]) -> Vec<Vec<f64>> {
+    let rows_a = matrix1.len();
+    let cols_b = matrix2[0].len();
+
+    (0..rows_a).into_par_iter().map(|indx| {
+        (0..cols_b).map(|j| {
+            let mut sum = 0.0;
+            for k in 0..matrix2.len() {
+                sum += matrix1[indx][k] * matrix2[k][j];
+            }
+            sum
+        }).collect()
+    }).collect()
+}
+
 
 #[pyclass]
 #[derive(Debug)]
@@ -29,6 +48,7 @@ impl RsMatrix {
     /// # Arguments
     ///
     /// * `other` - The second matrix.
+    #[pyo3(text_signature = "($self, other)")]
     fn mul(&self, other: &Self) -> Result<Self, PyErr> {
         if self.cols != other.rows {
             return Err(PyValueError::new_err(format!(
@@ -49,11 +69,22 @@ impl RsMatrix {
             }
         }
 
-        Ok(Self {
-            data: result,
-            rows: self.rows,
-            cols: other.cols,
-        })
+        Ok(Self::new(result)?)
+    }
+
+    fn mul_par(&self, other: &Self) -> Result<Self, PyErr> {
+        if self.cols != other.rows {
+                return Err(PyValueError::new_err(format!(
+                    "Invalid matrix dimensions. \
+                    The number of columns of the first matrix should be equal to the number of rows \
+                    of the second matrix. Got {} and {} instead.",
+                self.cols, other.rows,
+            )));
+        }
+
+        let result = multiply_matrices(&self.data, &other.data);
+
+        Ok(Self::new(result)?)
     }
 }
 
@@ -108,8 +139,10 @@ mod tests {
         let a = RsMatrix::new(a).unwrap();
         let b = RsMatrix::new(b).unwrap();
         let result = a.mul(&b);
+        let result_par = a.mul_par(&b);
 
-        assert_eq!(result.unwrap().data, expected);
+        assert_eq!(*result.unwrap().data, expected);
+        assert_eq!(*result_par.unwrap().data, expected);
     }
 
     #[test]

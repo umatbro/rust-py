@@ -42,6 +42,11 @@ def benchmark_rs(test_data: list[tuple[list[list[float]], list[list[float]]]]):
         RsMatrix(a).mul(RsMatrix(b))
 
 
+def benchmark_rs_parallel(test_data: list[tuple[list[list[float]], list[list[float]]]]):
+    for a, b in test_data:
+        RsMatrix(a).mul_par(RsMatrix(b))
+
+
 def time_execution(func, *args, **kwargs) -> float:
     start = time.time()
     func(*args, **kwargs)
@@ -54,8 +59,12 @@ if __name__ == "__main__":
     setup = setup_benchmark()
     print("Starting benchmark")
     python_time = time_execution(benchmark_python, setup)
-    print(f"Python implementation total: {python_time}")
-    print(f"Python implementation per iteration: {python_time / NUM_TESTS}")
+    print(f"Python implementation total: {python_time}s")
+    print(f"Python implementation per iteration: {python_time / NUM_TESTS}s")
     rs_time = time_execution(benchmark_rs, setup)
-    print(f"Rust implementation total: {rs_time}")
-    print(f"Rust implementation per iteration: {rs_time / NUM_TESTS}")
+    print(f"Rust implementation total: {rs_time}s")
+    print(f"Rust implementation per iteration: {rs_time / NUM_TESTS}s")
+
+    rs_time = time_execution(benchmark_rs_parallel, setup)
+    print(f"Rust implementation (parallel) total: {rs_time}s")
+    print(f"Rust implementation (parallel) per iteration: {rs_time / NUM_TESTS}s")
